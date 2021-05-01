@@ -3,8 +3,8 @@ import { SchemeInfo, SchemeOptions } from '../types';
 
 import { Table } from './table';
 
-const fs = require('fs');
-const path = require('path');
+import fs = require('fs');
+import nodePath = require('path');
 
 export class Scheme implements SchemeInterface {
   db: DBInterface;
@@ -19,8 +19,8 @@ export class Scheme implements SchemeInterface {
   constructor(options: SchemeOptions) {
     this.db = options.db;
     this.schemeName = options.schemeName;
-    this.schemePath = path.join(this.db.dbpath, this.schemeName);
-    this.schemeFilePath = path.join(this.schemePath, `${this.schemeName}__scheme_config.json`);
+    this.schemePath = nodePath.join(this.db.dbpath, this.schemeName);
+    this.schemeFilePath = nodePath.join(this.schemePath, `${this.schemeName}__scheme_config.json`);
 
     this.init();
   }

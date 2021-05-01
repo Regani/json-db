@@ -16,11 +16,11 @@ $ npm i json-db
 
 ## Working with data
 You have access to the following instances:
-- DB - main instance, group of schemes
+- DataBase - main instance, group of schemes
 - Scheme - group of tables
 - Table - like DB table
 
-### DB Methods
+### DataBase Methods
 You have access to the following methods:
 
 - `getSchemes(): string[]` - returns the list of schemes names

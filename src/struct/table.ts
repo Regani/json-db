@@ -1,8 +1,8 @@
 import { TableOptions, TableFileData, TableField } from '../types';
 import { SchemeInterface, TableInterface } from '../interfaces';
 
-const fs = require('fs');
-const path = require('path');
+import fs = require('fs');
+import nodePath = require('path');
 
 export class Table implements TableInterface {
   scheme: SchemeInterface;
@@ -12,7 +12,7 @@ export class Table implements TableInterface {
   constructor(options: TableOptions) {
     this.scheme = options.scheme;
     this.tableName = options.tableName;
-    this.tableFilePath = path.join(this.scheme.schemePath, `${this.tableName}__table_config.json`);
+    this.tableFilePath = nodePath.join(this.scheme.schemePath, `${this.tableName}__table_config.json`);
   }
 
   getData(): object[] {
@@ -115,7 +115,7 @@ export class Table implements TableInterface {
     // @ts-ignore
     const validFields = this.getFields().map((field) => field.name);
 
-    let validData = {};
+    const validData = {};
     validFields.forEach((field) => {
       // @ts-ignore
       validData[field] = item[field];
@@ -125,7 +125,7 @@ export class Table implements TableInterface {
   }
 
   _updateData(data: object): void {
-    let field = this._readFile();
+    const field = this._readFile();
     // @ts-ignore
     field.data = data;
     this._writeFile(field);

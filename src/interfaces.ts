@@ -6,25 +6,15 @@ export interface DBInterface {
   dbInfo: DBInfo;
 }
 
-interface getDataFunction {
-  (): object[];
-}
+type getDataFunction = () => object[];
 
-interface getTableFunction {
-  (tableName: string): TableInterface | undefined;
-}
+type getTableFunction = (tableName: string) => TableInterface | undefined;
 
-interface insertItemFunction {
-  (data: object): object[] | void;
-}
+type insertItemFunction = (data: object) => object[] | void;
 
-interface updateItemFunction {
-  (data: object): object[] | void;
-}
+type updateItemFunction = (data: object) => object[] | void;
 
-interface deleteItemFunction {
-  (data: object): object[] | void;
-}
+type deleteItemFunction = (data: object) => object[] | void;
 
 export interface SchemeInterface {
   schemeName: string;

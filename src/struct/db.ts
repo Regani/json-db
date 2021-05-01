@@ -3,10 +3,10 @@ import { DBInfo, DBOptions } from '../types';
 
 import { Scheme } from './scheme';
 
-const fs = require('fs');
-const path = require('path');
+import fs = require('fs');
+import nodePath = require('path');
 
-export class DB implements DBInterface {
+export class DataBase implements DBInterface {
   dbpath: string = '';
   dbFilePath: string = '';
   dbInfo: DBInfo = {
@@ -15,7 +15,7 @@ export class DB implements DBInterface {
 
   constructor(options: DBOptions) {
     this.dbpath = options.dbpath;
-    this.dbFilePath = path.join(this.dbpath, 'db.json');
+    this.dbFilePath = nodePath.join(this.dbpath, 'db.json');
 
     this.init();
   }
