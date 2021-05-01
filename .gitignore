@@ -1,0 +1,8 @@
+# Dependency directories
+node_modules/
+
+# Idea
+.idea
+
+db
+lib
