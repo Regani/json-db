@@ -1,7 +1,7 @@
 import { SchemeInfo, DBInfo } from './types';
 
 export interface DBInterface {
-  dbpath: string;
+  dbPath: string;
   dbFilePath: string;
   dbInfo: DBInfo;
 }

@@ -11,8 +11,19 @@ export type SchemeInfo = {
 };
 
 export type DBOptions = {
-  dbpath: string;
+  dbPath: string;
 };
+
+export type SeederData = {
+  path: string,
+  items: object[]
+}
+
+export type SeederOptions = {
+  dbPath: string,
+  name: string,
+  data: SeederData[]
+}
 
 export type DBInfo = {
   schemes: SchemeInterface[];
@@ -29,8 +40,30 @@ export type TableFileData = {
   data: object[];
 };
 
+export type MigrateFieldData = {
+  name: string;
+  type: string;
+  primary_key?: boolean,
+  nullable?: boolean
+}
 
-export type TableField = {
+export type MigrateTableData = {
+  name: string;
+  fields: TableFieldData[]
+}
+
+export type MigrateSchemeData = {
+  name: string,
+  tables: MigrateTableData[]
+}
+
+export type MigrateOptions = {
+  dbPath: string;
+  name: string;
+  schemes: MigrateSchemeData[];
+}
+
+export type TableFieldData = {
   name: string;
   type: string;
   primary_key: boolean,

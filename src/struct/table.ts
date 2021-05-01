@@ -1,4 +1,4 @@
-import { TableOptions, TableFileData, TableField } from '../types';
+import { TableOptions, TableFileData, TableFieldData } from '../types';
 import { SchemeInterface, TableInterface } from '../interfaces';
 
 import fs = require('fs');
@@ -12,14 +12,14 @@ export class Table implements TableInterface {
   constructor(options: TableOptions) {
     this.scheme = options.scheme;
     this.tableName = options.tableName;
-    this.tableFilePath = nodePath.join(this.scheme.schemePath, `${this.tableName}__table_config.json`);
+    this.tableFilePath = nodePath.join(this.scheme.schemePath, `${this.tableName}__table.json`);
   }
 
-  getData(): object[] {
-    return this._readFile().data;
+  getData(): object[] | [] {
+    return this._readFile().data || [];
   }
 
-  getFields(): TableField[] {
+  getFields(): TableFieldData[] {
     // @ts-ignore
     return this._readFile().fields;
   }
@@ -34,8 +34,9 @@ export class Table implements TableInterface {
     const primaryKey = this._getPrimaryKey();
     const data = this.getData();
     // @ts-ignore
-    const lastId = Math.max(...data.map((el) => el[primaryKey]));
+    const lastId = data.length ? Math.max(...data.map((el) => el[primaryKey])) : 0;
 
+    // @ts-ignore
     data.push({
       ...this._mapToValidObject(item),
       [primaryKey]: lastId + 1,
@@ -89,8 +90,9 @@ export class Table implements TableInterface {
   }
 
   _validate(item: object): boolean {
+    const tableFields = this.getFields();
     // @ts-ignore
-    const notNullableFields = this.getFields()
+    const notNullableFields = tableFields
       .filter((field) => !field.nullable && !field.primary_key)
       .map((field) => field.name);
 
@@ -100,10 +102,18 @@ export class Table implements TableInterface {
       return false;
     }
 
-    return notNullableFields.every((field) => {
+    const allNutNullablesFilled = notNullableFields.every(field => {
       // @ts-ignore
       return itemFields.includes(field) && !(item[field] === null || item[field] === undefined);
     });
+
+    const validDataTypes = itemFields.every((field) => {
+      const tableField = tableFields.find(tableField => tableField.name === field);
+      // @ts-ignore
+      return typeof item[field] === tableField.type
+    })
+
+    return allNutNullablesFilled && validDataTypes
   }
 
   _getPrimaryKey(): number {
@@ -118,7 +128,7 @@ export class Table implements TableInterface {
     const validData = {};
     validFields.forEach((field) => {
       // @ts-ignore
-      validData[field] = item[field];
+      validData[field] = item[field] || null;
     });
 
     return validData;

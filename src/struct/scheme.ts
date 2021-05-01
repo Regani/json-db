@@ -19,7 +19,7 @@ export class Scheme implements SchemeInterface {
   constructor(options: SchemeOptions) {
     this.db = options.db;
     this.schemeName = options.schemeName;
-    this.schemePath = nodePath.join(this.db.dbpath, this.schemeName);
+    this.schemePath = nodePath.join(this.db.dbPath, this.schemeName);
     this.schemeFilePath = nodePath.join(this.schemePath, `${this.schemeName}__scheme_config.json`);
 
     this.init();

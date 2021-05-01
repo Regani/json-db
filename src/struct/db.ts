@@ -7,22 +7,22 @@ import fs = require('fs');
 import nodePath = require('path');
 
 export class DataBase implements DBInterface {
-  dbpath: string = '';
+  dbPath: string = '';
   dbFilePath: string = '';
   dbInfo: DBInfo = {
     schemes: [],
   };
 
   constructor(options: DBOptions) {
-    this.dbpath = options.dbpath;
-    this.dbFilePath = nodePath.join(this.dbpath, 'db.json');
+    this.dbPath = options.dbPath;
+    this.dbFilePath = nodePath.join(this.dbPath, 'db.json');
 
     this.init();
   }
 
   init(): void {
-    if (!fs.existsSync(this.dbpath)) {
-      throw new Error('No database under ' + this.dbpath);
+    if (!fs.existsSync(this.dbPath)) {
+      throw new Error('No database under ' + this.dbPath);
     }
 
     const dbInfo = JSON.parse(fs.readFileSync(this.dbFilePath, { encoding: 'utf8' }));
