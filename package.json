@@ -1,5 +1,5 @@
 {
-  "name": "@bk/json-db",
+  "name": "json-db",
   "version": "1.0.0",
   "description": "Small lib 4 u to have json based db",
   "main": "lib/index.js",
@@ -8,15 +8,15 @@
     "lib/**/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --config jestconfig.json",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
-    "build": "tsc",
-    "prepare" : "npm run build",
-    "prepublishOnly" : "npm run lint",
-    "preversion" : "npm run lint",
-    "version" : "npm run format && git add -A src",
-    "postversion" : "git push && git push --tags"
+    "build": "npm run format && tsc",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -29,8 +29,11 @@
   },
   "homepage": "https://github.com/bokate/json-db#readme",
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@types/node": "^14.14.41",
+    "jest": "^26.6.3",
     "prettier": "^2.2.1",
+    "ts-jest": "^26.5.5",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.2.4"

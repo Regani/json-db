@@ -1,34 +1,48 @@
-import { SchemeInfo, DBInfo } from './types';
+import {
+  deleteItemFunction,
+  getFieldsFunction,
+  getDataFunction,
+  getSchemeFunction,
+  getSchemesFunction,
+  getTableFunction,
+  getTablesFunction,
+  insertItemFunction,
+  migrateFunction,
+  MigrateOptions,
+  SeederOptions,
+  seedFunction,
+  updateItemFunction,
+} from './types';
 
 export interface DBInterface {
-  dbPath: string;
-  dbFilePath: string;
-  dbInfo: DBInfo;
+  path: string;
+  schemes: SchemeInterface[];
+  getSchemes: getSchemesFunction;
+  getScheme: getSchemeFunction;
 }
 
-type getDataFunction = () => object[];
+export interface MigrateInterface {
+  options: MigrateOptions;
+  migrate: migrateFunction;
+}
 
-type getTableFunction = (tableName: string) => TableInterface | undefined;
-
-type insertItemFunction = (data: object) => object[] | void;
-
-type updateItemFunction = (data: object) => object[] | void;
-
-type deleteItemFunction = (data: object) => object[] | void;
+export interface SeederInterface {
+  options: SeederOptions;
+  seed: seedFunction;
+}
 
 export interface SchemeInterface {
-  schemeName: string;
-  schemePath: string;
-  schemeFilePath: string;
-  schemeInfo: SchemeInfo;
-  db: DBInterface;
+  name: string;
+  path: string;
+  tables: TableInterface[];
+  getTables: getTablesFunction;
   getTable: getTableFunction;
 }
 
 export interface TableInterface {
-  scheme: SchemeInterface;
-  tableName: string;
+  name: string;
   tableFilePath: string;
+  getFields: getFieldsFunction;
   getData: getDataFunction;
   insertItem: insertItemFunction;
   updateItem: updateItemFunction;

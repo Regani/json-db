@@ -1,67 +1,59 @@
-import { TableOptions, TableFileData, TableFieldData } from '../types';
-import { SchemeInterface, TableInterface } from '../interfaces';
-
 import fs = require('fs');
 import nodePath = require('path');
 
+import { TableDataItem, TableFieldData, TableFileData, TableOptions } from '../types';
+import { TableInterface } from '../interfaces';
+
 export class Table implements TableInterface {
-  scheme: SchemeInterface;
-  tableName: string = '';
-  tableFilePath: string = '';
+  name: string;
+  tableFilePath: string;
 
   constructor(options: TableOptions) {
-    this.scheme = options.scheme;
-    this.tableName = options.tableName;
-    this.tableFilePath = nodePath.join(this.scheme.schemePath, `${this.tableName}__table.json`);
-  }
+    this.name = options.tableName;
+    this.tableFilePath = nodePath.join(options.scheme.path, `${this.name}__table.json`);
 
-  getData(): object[] | [] {
-    return this._readFile().data || [];
+    if (!fs.existsSync(this.tableFilePath)) {
+      throw new TypeError(`Table does not exist: ${this.name}`);
+    }
   }
 
   getFields(): TableFieldData[] {
-    // @ts-ignore
     return this._readFile().fields;
   }
 
-  insertItem(item: object): object[] | void {
-    const isValid = this._validate(item);
+  getData(): TableDataItem[] {
+    return this._readFile().data;
+  }
 
-    if (!isValid) {
-      return console.error('Item is not valid');
-    }
+  insertItem(itemToInsert: TableDataItem): TableDataItem[] {
+    this._validate(itemToInsert);
 
-    const primaryKey = this._getPrimaryKey();
-    const data = this.getData();
-    // @ts-ignore
-    const lastId = data.length ? Math.max(...data.map((el) => el[primaryKey])) : 0;
+    const primaryKey = this._getPrimaryKeyName();
+    const allItems = this.getData();
+    const ids = allItems.map((item) => item[primaryKey]) as number[];
 
-    // @ts-ignore
-    data.push({
-      ...this._mapToValidObject(item),
+    const lastId = ids.length ? Math.max(...ids) : 0;
+
+    allItems.push({
+      ...this._mapToValidObject(itemToInsert),
       [primaryKey]: lastId + 1,
     });
 
-    this._updateData(data);
+    this._updateData(allItems);
 
     return this.getData();
   }
 
-  updateItem(item: object): object[] | void {
-    const isValid = this._validate(item);
+  updateItem(item: TableDataItem): TableDataItem[] {
+    this._validate(item);
 
-    if (!isValid) {
-      return console.error('Item is not valid');
-    }
-
-    const primaryKey = this._getPrimaryKey();
+    const primaryKey = this._getPrimaryKeyName();
     const data = this.getData();
 
-    // @ts-ignore
     const itemToUpdateIndex = data.findIndex((el) => el[primaryKey] === item[primaryKey]);
 
     if (itemToUpdateIndex === -1) {
-      return console.error('Item does not exist.');
+      throw new TypeError('Item does not exist.');
     }
 
     data.splice(itemToUpdateIndex, 1, this._mapToValidObject(item));
@@ -71,15 +63,14 @@ export class Table implements TableInterface {
     return this.getData();
   }
 
-  deleteItem(item: object): object[] | void {
-    const primaryKey = this._getPrimaryKey();
+  deleteItem(item: TableDataItem): TableDataItem[] {
+    const primaryKey = this._getPrimaryKeyName();
     const data = this.getData();
 
-    // @ts-ignore
     const itemToDeleteIndex = data.findIndex((el) => el[primaryKey] === item[primaryKey]);
 
     if (itemToDeleteIndex === -1) {
-      return console.error('Item does not exist.');
+      throw new TypeError('Item does not exist.');
     }
 
     data.splice(itemToDeleteIndex, 1);
@@ -89,55 +80,59 @@ export class Table implements TableInterface {
     return this.getData();
   }
 
-  _validate(item: object): boolean {
+  _validate(item: TableDataItem): void {
     const tableFields = this.getFields();
-    // @ts-ignore
+    const itemFields = Object.keys(item);
+
     const notNullableFields = tableFields
       .filter((field) => !field.nullable && !field.primary_key)
       .map((field) => field.name);
 
-    const itemFields = Object.keys(item);
-
-    if (notNullableFields.length && !itemFields.length) {
-      return false;
-    }
-
-    const allNutNullablesFilled = notNullableFields.every(field => {
-      // @ts-ignore
+    const allNutNullablesFilled = notNullableFields.every((field) => {
       return itemFields.includes(field) && !(item[field] === null || item[field] === undefined);
     });
 
-    const validDataTypes = itemFields.every((field) => {
-      const tableField = tableFields.find(tableField => tableField.name === field);
-      // @ts-ignore
-      return typeof item[field] === tableField.type
-    })
+    if (!allNutNullablesFilled) {
+      throw new TypeError('Not nullable fields are not provided');
+    }
 
-    return allNutNullablesFilled && validDataTypes
+    const tableFieldsNames = tableFields.map((field) => field.name);
+    const onlyExpectedItemFields = itemFields.filter((field) => tableFieldsNames.includes(field));
+
+    const validDataTypes = onlyExpectedItemFields.every((field) => {
+      const foundTableField = tableFields.find((tableField) => tableField.name === field) as { type: string };
+
+      return typeof item[field] === foundTableField.type;
+    });
+
+    if (!validDataTypes) {
+      throw new TypeError('Invalid data.');
+    }
   }
 
-  _getPrimaryKey(): number {
-    // @ts-ignore
-    return this.getFields().find((field: object[]) => field.primary_key).name;
+  _getPrimaryKeyName(): string {
+    const primaryField = this.getFields().find((field) => field.primary_key) as TableDataItem;
+
+    return primaryField.name as string;
   }
 
-  _mapToValidObject(item: object): object {
-    // @ts-ignore
+  _mapToValidObject(item: TableDataItem): TableDataItem {
     const validFields = this.getFields().map((field) => field.name);
 
-    const validData = {};
+    const validData: TableDataItem = {};
+
     validFields.forEach((field) => {
-      // @ts-ignore
-      validData[field] = item[field] || null;
+      validData[field] = item[field] !== undefined ? item[field] : null;
     });
 
     return validData;
   }
 
-  _updateData(data: object): void {
+  _updateData(data: TableDataItem[]): void {
     const field = this._readFile();
-    // @ts-ignore
+
     field.data = data;
+
     this._writeFile(field);
   }
 

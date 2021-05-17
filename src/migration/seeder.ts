@@ -1,43 +1,48 @@
 import fs = require('fs');
 import path = require('path');
 
-import {SeederOptions} from '../types';
-import {DataBase} from '../index';
+import { SeederOptions } from '../types';
+import { SeederInterface } from '../interfaces';
+import { DataBase } from '../index';
 
-export class Seeder {
+export class Seeder implements SeederInterface {
   options: SeederOptions;
 
-  constructor(seedOptions: SeederOptions) {
-    this._validateOptions(seedOptions);
-
-    this.options = seedOptions;
+  constructor(seederOptions: SeederOptions) {
+    this.options = seederOptions;
   }
 
-  seed() {
-    const DbInstance = new DataBase({dbPath: path.join(this.options.dbPath, this.options.name)});
+  seed(): void | TypeError {
+    this._validateOptions();
 
-    this.options.data.forEach(el => {
-      el.items.forEach(item => {
-        DbInstance.insertItemInto(el.path, item);
-      })
-    })
+    const DbInstance = new DataBase({ dbPath: path.join(this.options.dbPath, this.options.name) });
+
+    this.options.data.forEach((el) => {
+      const [schemeName, tableName] = el.path.split('.');
+
+      const scheme = DbInstance.getScheme(schemeName);
+      const table = scheme.getTable(tableName);
+
+      el.items.forEach((item) => {
+        table.insertItem(item);
+      });
+    });
   }
 
-  _validateOptions(seedOptions: SeederOptions) {
-    const dbFolderPath = path.join(seedOptions.dbPath, seedOptions.name);
+  _validateOptions() {
+    const dbFolderPath = path.join(this.options.dbPath, this.options.name);
 
     if (!fs.existsSync(path.join(dbFolderPath, 'db.json'))) {
-      throw new Error('Database does not exist.')
+      throw new TypeError('Database does not exist.');
     }
 
-    if (seedOptions.data && seedOptions.data.length) {
-      seedOptions.data.forEach(el => {
-        const tableName = el.path.split('.')[1];
+    this.options.data.forEach((el) => {
+      const schemeName = el.path.split('.')[0];
+      const tableName = el.path.split('.')[1];
 
-        if (fs.existsSync(path.join(dbFolderPath, el.path, `${tableName}__table.json`))) {
-          throw new Error(`Table with name ${tableName} does not exists.`)
-        }
-      })
-    }
+      if (!fs.existsSync(path.join(dbFolderPath, schemeName, `${tableName}__table.json`))) {
+        throw new TypeError(`Table with name ${tableName} does not exists.`);
+      }
+    });
   }
 }

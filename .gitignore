@@ -4,5 +4,8 @@ node_modules/
 # Idea
 .idea
 
+#Jest
+coverage
+
 db
 lib

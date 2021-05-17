@@ -1,47 +1,51 @@
-import { DBInterface, SchemeInterface, TableInterface } from '../interfaces';
-import { SchemeInfo, SchemeOptions } from '../types';
-
-import { Table } from './table';
-
 import fs = require('fs');
 import nodePath = require('path');
 
+import { SchemeInterface, TableInterface } from '../interfaces';
+import { SchemeOptions } from '../types';
+
+import { Table } from './table';
+
 export class Scheme implements SchemeInterface {
-  db: DBInterface;
-  schemeName: string = '';
-  schemePath: string = '';
-  schemeFilePath: string = '';
-  schemeInfo: SchemeInfo = {
-    name: '',
-    tables: [],
-  };
+  name: string;
+  path: string;
+  tables: TableInterface[];
 
   constructor(options: SchemeOptions) {
-    this.db = options.db;
-    this.schemeName = options.schemeName;
-    this.schemePath = nodePath.join(this.db.dbPath, this.schemeName);
-    this.schemeFilePath = nodePath.join(this.schemePath, `${this.schemeName}__scheme_config.json`);
+    this.name = options.schemeName;
+    this.path = nodePath.join(options.db.path, this.name);
 
-    this.init();
-  }
+    const schemeFilePath = nodePath.join(this.path, `${this.name}__scheme_config.json`);
 
-  init(): void {
-    const schemeInfo = JSON.parse(fs.readFileSync(this.schemeFilePath, { encoding: 'utf8' }));
+    if (!fs.existsSync(schemeFilePath)) {
+      throw new TypeError(`Scheme does not exist: ${this.name}`);
+    }
 
-    this.schemeInfo = {
-      ...schemeInfo,
-      tables: schemeInfo.tables.map((table: string) => {
-        return new Table({
-          scheme: this,
-          tableName: table,
-        });
-      }),
-    };
-  }
+    const schemeInfo = JSON.parse(fs.readFileSync(schemeFilePath, { encoding: 'utf8' }));
 
-  getTable(tableName: string): TableInterface | undefined {
-    return this.schemeInfo.tables.find((table: TableInterface) => {
-      return (table.tableName = tableName);
+    this.tables = schemeInfo.tables.map((table: string) => {
+      return new Table({
+        scheme: this,
+        tableName: table,
+      });
     });
+  }
+
+  getTables(): string[] {
+    return this.tables.map((table: TableInterface) => {
+      return table.name;
+    });
+  }
+
+  getTable(tableName: string): TableInterface {
+    const foundTable = this.tables.find((table: TableInterface) => {
+      return table.name === tableName;
+    });
+
+    if (!foundTable) {
+      throw new TypeError(`Table with name ${tableName} does not exists.`);
+    }
+
+    return foundTable;
   }
 }

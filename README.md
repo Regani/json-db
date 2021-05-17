@@ -14,6 +14,7 @@ To create an DB instance use:
 ```
 const {DataBase} = require('json-db');
 const MyDataBase = new DataBase({dbPath: <path_to_database_folder>})
+MyDataBase.init();
 ```
 
 ### Data instances
@@ -80,8 +81,8 @@ MySeeder.seed()
     {
         name: string, // name of column
         type: string, // column datatype. Must be one of the ['string', 'number', 'boolean']
-        primary_key: boolean, // if the field is primary_key. Primary key must be number type only. Must be one primary_key field. Primary key will be autoincremented. Primary key field cannot be nullable
-        nullable: boolean // if the field will be null when value is not passed
+        primary_key: boolean, // if the field is primary_key. Primary key must be number type only. Must be one primary_key field. Primary key will be autoincremented. Primary key field cannot be nullable.
+        nullable: boolean // if the field will be null when value is not passed.
     }
   ```
 - seederParams
