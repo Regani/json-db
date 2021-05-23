@@ -4,8 +4,7 @@ import fs = require('fs');
 import { INVALID_DB_PATH, VALID_MIGRATION_PARAMS } from './const';
 
 import { Migrate } from '../src';
-import { MigrateInterface } from '../src/interfaces';
-import { MigrateOptions } from '../src/types';
+import { MigrateInterface, MigrateOptions } from '../src/interfaces';
 
 const INVALID_PATH_MIGRATION_PARAMS: MigrateOptions = {
   ...VALID_MIGRATION_PARAMS,

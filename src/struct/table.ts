@@ -1,7 +1,7 @@
 import fs = require('fs');
 import nodePath = require('path');
 
-import { TableDataItem, TableFieldData, TableFileData, TableOptions } from '../types';
+import { TableDataItem, TableFieldData, TableFileData, TableOptions } from '../interfaces';
 import { TableInterface } from '../interfaces';
 
 export class Table implements TableInterface {
@@ -44,30 +44,30 @@ export class Table implements TableInterface {
     return this.getData();
   }
 
-  updateItem(item: TableDataItem): TableDataItem[] {
-    this._validate(item);
+  updateItem(itemToUpdate: TableDataItem): TableDataItem[] {
+    this._validate(itemToUpdate);
 
     const primaryKey = this._getPrimaryKeyName();
     const data = this.getData();
 
-    const itemToUpdateIndex = data.findIndex((el) => el[primaryKey] === item[primaryKey]);
+    const itemToUpdateIndex = data.findIndex((el) => el[primaryKey] === itemToUpdate[primaryKey]);
 
     if (itemToUpdateIndex === -1) {
       throw new TypeError('Item does not exist.');
     }
 
-    data.splice(itemToUpdateIndex, 1, this._mapToValidObject(item));
+    data.splice(itemToUpdateIndex, 1, this._mapToValidObject(itemToUpdate));
 
     this._updateData(data);
 
     return this.getData();
   }
 
-  deleteItem(item: TableDataItem): TableDataItem[] {
+  deleteItem(itemToDelete: TableDataItem): TableDataItem[] {
     const primaryKey = this._getPrimaryKeyName();
     const data = this.getData();
 
-    const itemToDeleteIndex = data.findIndex((el) => el[primaryKey] === item[primaryKey]);
+    const itemToDeleteIndex = data.findIndex((el) => el[primaryKey] === itemToDelete[primaryKey]);
 
     if (itemToDeleteIndex === -1) {
       throw new TypeError('Item does not exist.');
@@ -111,9 +111,9 @@ export class Table implements TableInterface {
   }
 
   _getPrimaryKeyName(): string {
-    const primaryField = this.getFields().find((field) => field.primary_key) as TableDataItem;
+    const primaryField = this.getFields().find((field) => field.primary_key) as { name: string };
 
-    return primaryField.name as string;
+    return primaryField.name;
   }
 
   _mapToValidObject(item: TableDataItem): TableDataItem {

@@ -2,7 +2,7 @@ import fs = require('fs');
 import nodePath = require('path');
 
 import { SchemeInterface, TableInterface } from '../interfaces';
-import { SchemeOptions } from '../types';
+import { SchemeOptions } from '../interfaces';
 
 import { Table } from './table';
 

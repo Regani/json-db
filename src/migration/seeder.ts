@@ -1,7 +1,7 @@
 import fs = require('fs');
 import path = require('path');
 
-import { SeederOptions } from '../types';
+import { SeederOptions } from '../interfaces';
 import { SeederInterface } from '../interfaces';
 import { DataBase } from '../index';
 

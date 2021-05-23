@@ -4,7 +4,7 @@ import fs = require('fs');
 import { DB_NAME, DB_PATH, INVALID_DB_PATH, INVALID_TABLE_PATH, TABLE_ITEMS_TO_SEED, TABLE_PATH } from './const';
 
 import { Seeder } from '../src';
-import { SeederData, SeederOptions } from '../src/types';
+import { SeederData, SeederOptions } from '../src/interfaces';
 import { SeederInterface } from '../src/interfaces';
 import { getPrimaryKeyName, mapWithPrimary } from './helper';
 

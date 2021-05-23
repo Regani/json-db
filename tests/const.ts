@@ -1,5 +1,5 @@
 import path = require('path');
-import { MigrateOptions } from '../src/types';
+import { MigrateOptions } from '../src/interfaces';
 
 export const DB_PATH = path.join(__dirname, '../db');
 export const DB_NAME = 'test-migrate-db';

@@ -1,5 +1,4 @@
-import { TableDataItem, TableFieldData } from '../src/types';
-import { TableInterface } from '../src/interfaces';
+import { TableInterface, TableDataItem, TableFieldData } from '../src/interfaces';
 
 export const mapWithPrimary = (primaryKeyName: string, items: TableDataItem[]) => {
   let itemIDCounter = 0;

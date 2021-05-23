@@ -10,7 +10,7 @@ import {
 
 import { DataBase, Scheme, Table } from '../src';
 
-import { TableDataItem } from '../src/types';
+import { TableDataItem } from '../src/interfaces';
 
 import { getLastItemWithInvalidId, getPrimaryKeyName, mapWithPrimary } from './helper';
 

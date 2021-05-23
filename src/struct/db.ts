@@ -1,5 +1,5 @@
 import { DBInterface, SchemeInterface } from '../interfaces';
-import { DBOptions } from '../types';
+import { DBOptions } from '../interfaces';
 
 import { Scheme } from './scheme';
 import fs = require('fs');

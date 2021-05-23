@@ -1,5 +1,4 @@
-import { MigrateFieldData, MigrateOptions, MigrateSchemeData, MigrateTableData } from '../types';
-import { MigrateInterface } from '../interfaces';
+import { MigrateInterface, MigrateOptions, MigrateSchemeData, MigrateTableData, TableFieldData } from '../interfaces';
 import nodePath = require('path');
 import fs = require('fs');
 
@@ -99,7 +98,7 @@ export class Migrate implements MigrateInterface {
     return this._areValidField(table.fields);
   }
 
-  _areValidField(fields: MigrateFieldData[]): void | TypeError {
+  _areValidField(fields: TableFieldData[]): void | TypeError {
     const primaryKeys = fields.filter((field) => field.primary_key);
     const maximumOnePrimary = primaryKeys.length <= 1;
 
