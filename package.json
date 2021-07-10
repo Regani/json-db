@@ -1,7 +1,7 @@
 {
-  "name": "json-db",
+  "name": "jdatabase",
   "version": "1.0.0",
-  "description": "Small lib 4 u to have json based db",
+  "description": "Small lib for you to have json based db",
   "main": "lib/index.js",
   "types": "lib/types.ts",
   "files": [

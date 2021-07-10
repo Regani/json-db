@@ -1,4 +1,4 @@
-# JSON-DB
+# jdatabase
 Small library that allows you to work with json files as with database.
 
 ## Installation
@@ -6,13 +6,13 @@ Small library that allows you to work with json files as with database.
 Using npm:
 ```shell
 $ npm i -g npm
-$ npm i json-db
+$ npm i jdatabase
 ```
 
 ## Database Usage
 To create an DB instance use:
 ```
-const {DataBase} = require('json-db');
+const {DataBase} = require('jdatabase');
 const MyDataBase = new DataBase(DBOptions)
 MyDataBase.init();
 ```
@@ -37,14 +37,14 @@ You allowed use migrations to easily setup database and seed some data.
 
 To use migrations do:
 ```
-const {Migrate} = require('json-db');
+const {Migrate} = require('jdatabase');
 const MyMigration = new Migrate(MigrateOptions)
 MyMigration.migrate()
 ```
 
 To use seeder do:
 ```
-const {Seeder} = require('json-db');
+const {Seeder} = require('jdatabase');
 const MySeeder = new Seeder(SeederOptions)
 MySeeder.seed()
 ```
